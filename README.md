@@ -1,6 +1,6 @@
-# 🌍 AQI Forecast - Air Quality Prediction
+# 🌍 AQI Forecast - Air Quality Prediction in "Chi cục BVMT"
 
-AQI Forecast is a web application that predicts air quality using Machine Learning. This project uses LSTM models to forecast AQI (Air Quality Index) based on environmental factors such as PM2.5, PM10, CO, NO2, temperature, humidity, and wind speed.
+AQI Forecast is a web application that predicts air quality using Deep Learning. This project uses LSTM models to forecast AQI (Air Quality Index) based on environmental factors such as PM2.5, PM10, CO, NO2, temperature, humidity, and wind speed.
 
 ## ✨ Key Features
 
