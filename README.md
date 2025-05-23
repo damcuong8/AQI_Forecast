@@ -82,6 +82,6 @@ For detailed model architecture, training process, and performance analysis, ple
 
 ## 📈 Model Performance
 
-Mean Absolute Percentage Error (MAPE): 0.78048
+Mean Absolute Percentage Error (MAPE): 0.078048
 
 **Made with ❤️ for cleaner air quality monitoring** 
