@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Air Quality Forecast</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chất lượng không khí tại Chi cục BVMT (KK), Hà Nội</h1>
+        <div id="aqi-forecast">
+            {% if error %}
+                <p style="color: red;">Error: {{ error }}</p>
+            {% elif predictions %}
+            {% else %}
+            {% endif %}
+                <h2>Dự đoán chất lượng không khí không 72 giờ tới</h2>
+                <div class="chart-container">
+                    <canvas id="aqiChart"></canvas>
+                </div>
+                <script>
+                    const ctx = document.getElementById('aqiChart').getContext('2d');
+                    const hours = {{ hours|tojson }};
+                    const predictedAQI = {{ predictions|tojson }};
+                    const colors = {{ colors|tojson }};
+                    const aqiData = {
+                        labels: hours,
+                        datasets: [{
+                            label: 'AQI',
+                            data: predictedAQI,
+                            backgroundColor: colors,
+                            borderColor: colors,
+                            borderWidth: 1
+                        }]
+                    };
+                    const config = {
+                        type: 'bar',
+                        data: aqiData,
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                },
+                                x: {
+                                    type: 'category',
+                                    label: {
+                                        display: true,
+                                        labelString: 'Hours'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Air Quality Forecast'
+                                }
+                            }
+                        }
+                    };
+                    const aqiChart = new Chart(ctx, config);
+                </script>
+        </div>
+
+        <h2 style="text-align: center;">Dữ liệu lịch sử</h2>
+
+        <div class="btn-container">
+            <button class="btn" onclick="showHistoricalData('AQI')">AQI</button>
+            <button class="btn" onclick="showHistoricalData('PM2.5')">PM2.5</button>
+            <button class="btn" onclick="showHistoricalData('PM10')">PM10</button>
+            <button class="btn" onclick="showHistoricalData('CO')">CO</button>
+            <button class="btn" onclick="showHistoricalData('NO2')">NO2</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="historicalChart"></canvas>
+        </div>
+
+        <script>
+            const historicalCtx = document.getElementById('historicalChart').getContext('2d');
+            let historicalChart;
+
+            function showHistoricalData(metric) {
+                const historicalData = {{ historical_data|tojson }};
+                const hours = {{ hours|tojson }};
+                const historicalColors = {{ historical_colors|tojson }};
+
+                const chartData = {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: metric,
+                            data: historicalData.map(row => row[metric]),
+                            backgroundColor: historicalColors[metric],
+                            borderColor: historicalColors[metric],
+                            borderWidth: 1
+                        }
+                    ]
+                };
+
+                if (historicalChart) {
+                    historicalChart.destroy();
+                }
+
+                historicalChart = new Chart(historicalCtx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'category',
+                                title: {
+                                    display: true,
+                                    text: 'Hours'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Historical ${metric} Data`
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>
